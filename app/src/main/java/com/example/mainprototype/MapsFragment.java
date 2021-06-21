@@ -31,6 +31,7 @@ public class MapsFragment extends Fragment {
     FusedLocationProviderClient fusedLocationProviderClient;
     LatLng currentLocation = new LatLng(-0, 0);
 
+    //callback to map....Main codes are to be done here
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         @Override
