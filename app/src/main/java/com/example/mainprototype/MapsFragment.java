@@ -37,38 +37,56 @@ public class MapsFragment extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            googleMap.setMyLocationEnabled(true);
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        LatLng newLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-                        currentLocation = newLatLng;
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.FOREGROUND_SERVICE}, 1);
+                googleMap.setMyLocationEnabled(true);
+                fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            LatLng newLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            currentLocation = newLatLng;
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
-                        CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                                .zoom(17)                   // Sets the zoom
-                                .bearing(90)                // Sets the orientation of the camera to east
-                                .tilt(40)                   // Sets the tilt of the camera to 30 degrees
-                                .build();                   // Creates a CameraPosition from the builder
-                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                        Log.e("New Location", "Singapore");
-                    } else {
-                        Log.e("Location not found", ":(");
+                            CameraPosition cameraPosition = new CameraPosition.Builder()
+                                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                                    .zoom(17)                   // Sets the zoom
+                                    .bearing(90)                // Sets the orientation of the camera to east
+                                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                                    .build();                   // Creates a CameraPosition from the builder
+                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                            Log.e("New Location", "Singapore");
+                        } else {
+                            Log.e("Location not found", ":(");
+                        }
                     }
-                }
-            });
+                });
+            }
+            else{
+                googleMap.setMyLocationEnabled(true);
+                fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            LatLng newLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            currentLocation = newLatLng;
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+
+                            CameraPosition cameraPosition = new CameraPosition.Builder()
+                                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                                    .zoom(17)                   // Sets the zoom
+                                    .bearing(90)                // Sets the orientation of the camera to east
+                                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                                    .build();                   // Creates a CameraPosition from the builder
+                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                            Log.e("New Location", "Singapore");
+                        } else {
+                            Log.e("Location not found", ":(");
+                        }
+                    }
+                });
+            }
         }
     };
 
