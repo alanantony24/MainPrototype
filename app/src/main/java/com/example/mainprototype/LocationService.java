@@ -59,6 +59,7 @@ public class LocationService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(LocationService.this, NOTIFICATION_CHANNEL_ID)
                 .setAutoCancel(false)
                 .setOngoing(true)
+                .setSmallIcon(R.drawable.common_google_signin_btn_icon_disabled)
                 .setContentTitle("Running App")
                 .setContentText("00:00:00")
                 .setContentIntent(getMainActivityPendingIntent());
