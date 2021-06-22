@@ -1,18 +1,28 @@
 package com.example.mainprototype;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+
+import java.util.List;
 
 import static com.example.mainprototype.Constants.ACTION_START_OR_RESUME_SERVICE;
 import static com.example.mainprototype.Constants.NOTIFICATION_CHANNEL_ID;
@@ -22,6 +32,7 @@ import static com.example.mainprototype.Constants.NOTIFICATION_ID;
 public class LocationService extends Service {
 
     boolean isFirstRun = true;
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -49,6 +60,33 @@ public class LocationService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        fusedLocationProviderClient = new FusedLocationProviderClient(this);
+        updateLocationTracking();
+    }
+
+    @SuppressLint("MissingPermission")
+    private void updateLocationTracking(){
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(2000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
+    LocationCallback locationCallback = new LocationCallback(){
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            super.onLocationResult(locationResult);
+            List<Location> locationList = locationResult.getLocations();
+            for (Location location :
+                    locationList) {
+                Log.e("Location", location.getLatitude() + " , " + location.getLongitude());
+            }
+        }
+    };
+
     private void startForegroundService(){
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -60,7 +98,7 @@ public class LocationService extends Service {
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.common_google_signin_btn_icon_disabled)
-                .setContentTitle("Running App")
+                .setContentTitle("App is running")
                 .setContentText("00:00:00")
                 .setContentIntent(getMainActivityPendingIntent());
         startForeground(NOTIFICATION_ID, builder.build());
