@@ -62,7 +62,7 @@ public class LocationService extends Service {
                 .setContentTitle("Running App")
                 .setContentText("00:00:00")
                 .setContentIntent(getMainActivityPendingIntent());
-        startForeground(1, builder.build());
+        startForeground(NOTIFICATION_ID, builder.build());
     }
 
     private PendingIntent getMainActivityPendingIntent(){
@@ -76,6 +76,7 @@ public class LocationService extends Service {
     private void createNotificationChannel(NotificationManager notificationManager){
         NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
         notificationManager.createNotificationChannel(notificationChannel);
+        Log.e("Notification", "Nope");
     }
 
     @Nullable
