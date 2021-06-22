@@ -17,7 +17,7 @@ public class LocationService extends Service {
             if(action != null){
                 Log.e("Action", action);
                 if (action.equals(ACTION_START_OR_RESUME_SERVICE)) {
-                    Log.d("LOCATIONSERVICE", "Started or resumed service");
+                    Log.e("LOCATIONSERVICE", "Started or resumed service");
                 }else if(action.equals(Constants.ACTION_PAUSE_SERVICE)){
                     Log.d("LOCATIONSERVICE", "Paused service");
                 }

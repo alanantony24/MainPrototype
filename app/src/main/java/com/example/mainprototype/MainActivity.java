@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void sendCommandToService(String action){
-        Intent intent = new Intent(MainActivity.this, com.example.mainprototype.LocationService.class);
+        Intent intent = new Intent(MainActivity.this, LocationService.class);
         intent.setAction(action);
         MainActivity.this.startService(intent);
     }
