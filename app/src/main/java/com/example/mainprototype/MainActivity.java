@@ -1,8 +1,6 @@
 package com.example.mainprototype;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,11 +15,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button startRun = findViewById(R.id.startRun);
+        Button stopRun = findViewById(R.id.stopRun);
         startRun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendCommandToService(Constants.ACTION_START_OR_RESUME_SERVICE);
                 Log.e("Start service", "Done");
+            }
+        });
+        stopRun.setOnClickListener(new View.OnClickListener() {
+            String action = Constants.ACTION_STOP_SERVICE;
+            @Override
+            public void onClick(View v) {
+                sendCommandToService(action);
             }
         });
     }
@@ -30,4 +36,5 @@ public class MainActivity extends AppCompatActivity {
         intent.setAction(action);
         MainActivity.this.startService(intent);
     }
+
 }

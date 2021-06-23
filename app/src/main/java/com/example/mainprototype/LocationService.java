@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -32,6 +33,7 @@ import static com.example.mainprototype.Constants.NOTIFICATION_ID;
 public class LocationService extends Service {
 
     boolean isFirstRun = true;
+    boolean isTracking = false;
     FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
@@ -41,30 +43,25 @@ public class LocationService extends Service {
             if(action != null){
                 Log.e("Action", action);
                 if (action.equals(ACTION_START_OR_RESUME_SERVICE)) {
-                    if(isFirstRun){
+                    isTracking = true;
+                    if(isTracking){
                         startForegroundService();
+                        fusedLocationProviderClient = new FusedLocationProviderClient(this);
+                        updateLocationTracking();
                         isFirstRun = false;
                         Log.e("LOCATIONSERVICE", "Started or resumed service....");
                     }
-                    else{
-                        Log.d("Resume", "Resuming");
-                    }
-                }else if(action.equals(Constants.ACTION_PAUSE_SERVICE)){
-                    Log.d("LOCATIONSERVICE", "Paused service");
                 }
-                else{
+                else if(action.equals(Constants.ACTION_STOP_SERVICE)){
+                    isTracking = false;
+                    fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                    stopForeground(true);
+                    LocationService.this.stopSelf();
                     Log.d("LOCATIONSERVICE", "Stopped service");
                 }
             }
         }
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        fusedLocationProviderClient = new FusedLocationProviderClient(this);
-        updateLocationTracking();
     }
 
     @SuppressLint("MissingPermission")
