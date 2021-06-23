@@ -31,7 +31,7 @@ import static com.example.mainprototype.Constants.NOTIFICATION_CHANNEL_NAME;
 import static com.example.mainprototype.Constants.NOTIFICATION_ID;
 
 public class LocationService extends Service {
-
+    DBHandler db = new DBHandler(this);
     boolean isFirstRun = true;
     boolean isTracking = false;
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -70,6 +70,7 @@ public class LocationService extends Service {
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(2000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        db.delelteAll();
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
     Location location;
@@ -88,6 +89,7 @@ public class LocationService extends Service {
                         .setContentTitle("Live coordinates of current location")
                         .setContentText(location.getLatitude() + ", " + location.getLongitude())
                         .setContentIntent(getMainActivityPendingIntent());
+                db.addUser(location.getLatitude(),location.getLongitude());
                 startForeground(NOTIFICATION_ID, builder.build());
             }
         }

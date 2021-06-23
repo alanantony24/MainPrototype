@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -25,15 +26,18 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.ArrayList;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MapsFragment extends Fragment {
-
     FusedLocationProviderClient fusedLocationProviderClient;
     LatLng currentLocation = new LatLng(-0, 0);
-
+    Context c;
     //callback to map....Main codes are to be done here
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -67,6 +71,7 @@ public class MapsFragment extends Fragment {
                                 .tilt(0)                   // Sets the tilt of the camera to 30 degrees
                                 .build();                   // Creates a CameraPosition from the builder
                         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        setPoints(googleMap);
                         Log.e("New Location", "Singapore");
                     } else {
                         Log.e("Location not found", ":(");
@@ -113,10 +118,33 @@ public class MapsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        c = view.getContext();
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+    }
+    public void setPoints(GoogleMap googleMap){
+        DBHandler db = new DBHandler(c);
+        ArrayList<LatLng> pList = db.getAllPoints();
+        for (int i = 0; i < pList.size() - 1; i++) {
+            LatLng src = pList.get(i);
+            LatLng dest = pList.get(i + 1);
+            Log.e("Location", "new point"+i);
+            // mMap is the Map Object
+            googleMap.addPolyline(new PolylineOptions()
+                    .add(
+                            new LatLng(src.latitude, src.longitude),
+                            new LatLng(dest.latitude,dest.longitude)
+                    )
+                    .width(10).color(R.color.purple_200)
+            );
+            if(i == (pList.size()-1)){
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(pList.get(0)));
+            }
+        }
+
+
     }
 }
