@@ -75,33 +75,32 @@ public class LocationService extends Service {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
+    Location location;
     LocationCallback locationCallback = new LocationCallback(){
         @Override
         public void onLocationResult(LocationResult locationResult) {
             super.onLocationResult(locationResult);
             List<Location> locationList = locationResult.getLocations();
-            for (Location location :
-                    locationList) {
+            for (int i = 0; i < locationList.size(); i++) {
+                location = locationList.get(i);
                 Log.e("Location", location.getLatitude() + " , " + location.getLongitude());
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(LocationService.this, NOTIFICATION_CHANNEL_ID)
+                        .setAutoCancel(false)
+                        .setOngoing(true)
+                        .setSmallIcon(R.drawable.common_google_signin_btn_icon_disabled)
+                        .setContentTitle("Live coordinates of current location")
+                        .setContentText(location.getLatitude() + ", " + location.getLongitude())
+                        .setContentIntent(getMainActivityPendingIntent());
+                startForeground(NOTIFICATION_ID, builder.build());
             }
         }
     };
 
     private void startForegroundService(){
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             createNotificationChannel(notificationManager);
         }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(LocationService.this, NOTIFICATION_CHANNEL_ID)
-                .setAutoCancel(false)
-                .setOngoing(true)
-                .setSmallIcon(R.drawable.common_google_signin_btn_icon_disabled)
-                .setContentTitle("App is running")
-                .setContentText("00:00:00")
-                .setContentIntent(getMainActivityPendingIntent());
-        startForeground(NOTIFICATION_ID, builder.build());
     }
 
     private PendingIntent getMainActivityPendingIntent(){

@@ -64,7 +64,7 @@ public class MapsFragment extends Fragment {
                                 .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
                                 .zoom(17)                   // Sets the zoom
                                 .bearing(90)                // Sets the orientation of the camera to east
-                                .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                                .tilt(0)                   // Sets the tilt of the camera to 30 degrees
                                 .build();                   // Creates a CameraPosition from the builder
                         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                         Log.e("New Location", "Singapore");
