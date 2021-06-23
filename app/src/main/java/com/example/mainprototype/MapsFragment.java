@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 public class MapsFragment extends Fragment {
 
@@ -44,6 +47,7 @@ public class MapsFragment extends Fragment {
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
+                requestPermissions();
                 return;
             }
             googleMap.setMyLocationEnabled(true);
@@ -79,6 +83,31 @@ public class MapsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         return inflater.inflate(R.layout.fragment_maps, container, false);
+    }
+    private void requestPermissions(){
+        TrackingUtility tU = new TrackingUtility();
+        if(tU.HasPermissions(getActivity())){
+            return;
+        }
+        if (Build.VERSION.SDK_INT<Build.VERSION_CODES.Q){
+            EasyPermissions.requestPermissions(
+                    getActivity(),
+                    "You have to accept permissions",
+                    0,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACTIVITY_RECOGNITION
+            );
+        }else{
+            EasyPermissions.requestPermissions(
+                    getActivity(),
+                    "You have to accept permissions",
+                    0,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            );
+        }
     }
 
     @Override
