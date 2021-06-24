@@ -9,14 +9,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -24,6 +27,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 
 import java.util.List;
+import java.util.Locale;
 
 import static com.example.mainprototype.Constants.ACTION_START_OR_RESUME_SERVICE;
 import static com.example.mainprototype.Constants.NOTIFICATION_CHANNEL_ID;
@@ -34,6 +38,8 @@ public class LocationService extends Service {
     DBHandler db = new DBHandler(this);
     boolean isFirstRun = true;
     boolean isTracking = false;
+    int seconds = 0;
+    boolean running = false;
     FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
@@ -49,11 +55,14 @@ public class LocationService extends Service {
                         fusedLocationProviderClient = new FusedLocationProviderClient(this);
                         updateLocationTracking();
                         isFirstRun = false;
+                        running = true;
+                        runTimer();
                         Log.e("LOCATIONSERVICE", "Started or resumed service....");
                     }
                 }
                 else if(action.equals(Constants.ACTION_STOP_SERVICE)){
                     isTracking = false;
+                    running = false;
                     fusedLocationProviderClient.removeLocationUpdates(locationCallback);
                     stopForeground(true);
                     LocationService.this.stopSelf();
@@ -112,6 +121,28 @@ public class LocationService extends Service {
     private void createNotificationChannel(NotificationManager notificationManager){
         NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
         notificationManager.createNotificationChannel(notificationChannel);
+    }
+    private void runTimer(){
+        Context c = LocationService.this;
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                int hours = seconds / 3600;
+                int minutes = (seconds % 3600) / 60;
+                int secs = seconds % 60;
+                String time = String.format(Locale.getDefault(),
+                                                "%d:%02d:%02d",
+                                                hours, minutes, secs);
+                if(running){
+                    seconds++;
+                }
+                handler.postDelayed(this, 100);
+                Intent intent = new Intent("Time");
+                intent.putExtra("StopWatch", time);
+                LocalBroadcastManager.getInstance(c).sendBroadcast(intent);
+            }
+        });
     }
 
     @Nullable
