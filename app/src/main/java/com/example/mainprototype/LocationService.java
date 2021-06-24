@@ -81,7 +81,6 @@ public class LocationService extends Service {
             List<Location> locationList = locationResult.getLocations();
             for (int i = 0; i < locationList.size(); i++) {
                 location = locationList.get(i);
-                Log.e("Location", location.getLatitude() + " , " + location.getLongitude());
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(LocationService.this, NOTIFICATION_CHANNEL_ID)
                         .setAutoCancel(false)
                         .setOngoing(true)
@@ -113,7 +112,6 @@ public class LocationService extends Service {
     private void createNotificationChannel(NotificationManager notificationManager){
         NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
         notificationManager.createNotificationChannel(notificationChannel);
-        Log.e("Notification", "Nope");
     }
 
     @Nullable

@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendCommandToService(Constants.ACTION_START_OR_RESUME_SERVICE);
-                Log.e("Start service", "Done");
             }
         });
         stopRun.setOnClickListener(new View.OnClickListener() {

@@ -72,7 +72,6 @@ public class MapsFragment extends Fragment {
                                 .build();                   // Creates a CameraPosition from the builder
                         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                         setPoints(googleMap);
-                        Log.e("New Location", "Singapore");
                     } else {
                         Log.e("Location not found", ":(");
                     }
