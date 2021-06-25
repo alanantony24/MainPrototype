@@ -99,6 +99,7 @@ public class LocationService extends Service {
                         .setContentIntent(getMainActivityPendingIntent());
                 db.addUser(location.getLatitude(),location.getLongitude());
                 startForeground(NOTIFICATION_ID, builder.build());
+                Log.d("LOCATION", location.getLatitude() + ", " + location.getLongitude());
             }
         }
     };
@@ -137,7 +138,7 @@ public class LocationService extends Service {
                 if(running){
                     seconds++;
                 }
-                handler.postDelayed(this, 100);
+                handler.postDelayed(this, 1000);
                 Intent intent = new Intent("Time");
                 intent.putExtra("StopWatch", time);
                 LocalBroadcastManager.getInstance(c).sendBroadcast(intent);
